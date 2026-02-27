@@ -34,16 +34,3 @@ flowchart TD
     B --> I["Logger (internal/logger/logger.go)"]
     I --> J["Console / File"]
 ```
-
-## Как запустить (пример)
-
-```bash
-# Сборка
-go build -o shortify ./cmd
-
-# Запуск
-./shortify encode https://example.com/very/long/path
-./shortify decode a1b2c3
-```
-
-> **Примечание:** перед запуском необходимо настроить подключение к базе данных в файле `.env`.
