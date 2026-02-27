@@ -21,17 +21,19 @@
 
 ## Схема работы
 
+```mermaid
 flowchart TD
     A["CLI (cmd/main.go)"] --> B["App Layer (internal/app/app.go)"]
-    B --> C{Command}
+    B --> C{Handlers}
     C -->|encode| D["Encode Handler (internal/handlers/encodeAddres.go)"]
     C -->|decode| E["Decode Handler (internal/handlers/getAddres.go)"]
     D --> F["Coder (internal/helpers/coder.go)"]
-    E --> F
+    E --> H
     F --> G["DB Ops (internal/db/ops.go)"]
     G --> H["PostgreSQL"]
     B --> I["Logger (internal/logger/logger.go)"]
     I --> J["Console / File"]
+```
 
 ## Как запустить (пример)
 
