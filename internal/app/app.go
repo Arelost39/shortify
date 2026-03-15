@@ -23,7 +23,7 @@ func App() error {
 	ctx := context.Background()
 	var ENV m.ENV = c.LoadENV()
 
-	database := db.New(ctx, ENV)
+	database := db.New(ctx, ENV, log)
 	err := database.InitPool()
 	if err != nil {
 		log.Error("Ошибка инициализации пула соединений", zap.Error(err))
@@ -34,6 +34,6 @@ func App() error {
 	r.GET("/", h.GetFullAddres())
 	r.POST("/encode", h.GetEncodedAddress())
 
-	r.Run(":"+ENV.DBport)
+	r.Run(":"+ENV.ShortifyPort)
 	return nil
 }

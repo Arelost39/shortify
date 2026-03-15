@@ -2,8 +2,7 @@ package db
 
 import (
 	"context"
-
-	"strconv"
+	"fmt"
 	"time"
 
 	m "shortify/internal/models"
@@ -13,37 +12,41 @@ import (
 )
 
 type Database struct {
-	pool	*pgxpool.Pool
 	ctx 	context.Context
 	env 	m.ENV
 	log		*zap.Logger
+	pool	*pgxpool.Pool
 }
 
-func New(context context.Context, ENV m.ENV) Database {
+func New(context context.Context, ENV m.ENV, log *zap.Logger) Database {
 	var DBconn Database
 
 	DBconn.ctx = context
 	DBconn.env = ENV
+	DBconn.log = log
 	
 	return DBconn
 }
 
 func (db *Database) InitPool() error {
 
-	port, err := strconv.ParseUint(db.env.DBport, 10, 32)
+	// db.log.Info(db.env.DBport)
+
+
+	dsn := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		db.env.DBuser,
+		db.env.DBpassword,
+		db.env.DBhost,
+		db.env.DBport,
+		db.env.DBname,
+	)
+
+	cfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
-		db.log.Error("Ошибка парсинга порта", zap.Error(err))
+		db.log.Error("ParseConfig error", zap.Error(err))
 		return err
 	}
-
-    cfg := &pgxpool.Config{}
-    cfg.ConnConfig.Host = db.env.DBhost
-
-    cfg.ConnConfig.Port = uint16(port)
-    cfg.ConnConfig.Database = db.env.DBname
-    cfg.ConnConfig.User = db.env.DBuser
-    cfg.ConnConfig.Password = db.env.DBpassword
-    cfg.ConnConfig.Config.TLSConfig = nil
 
 	// конфигурация пула подкючений
 	// 
