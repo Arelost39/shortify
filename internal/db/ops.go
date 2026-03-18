@@ -1,22 +1,17 @@
 package db
 
-import (
-	//"database/sql"
-)
+//"database/sql"
 
-func (db *Database) GetLastID() (string, error) {
+func (db *Database) GetLastID() (int64, error) {
 	
 	const q = `
 		SELECT COALESCE(MAX(id), 0) FROM encoded_links;
 	`
-	rows, err := db.pool.Query(db.ctx, q)
-	if err != nil {
-		return "", err
-	}
-	var result string
+	var result int64
 
-	if err = rows.Scan(&result); err != nil {
-		return "", err
+	err := db.pool.QueryRow(db.ctx, q).Scan(&result)
+	if err != nil {
+		return 0, err
 	}
 
 	return result, nil
@@ -41,15 +36,10 @@ func (db *Database) Decode(encoded_link string) (string, error) {
 	const q = `
 		SELECT * FROM shortify.encoded_links WHERE encoded_link = $1;
 	`
-
-	rows, err := db.pool.Query(db.ctx, q, encoded_link)
-	if err != nil {
-		return "", err
-	}
-
 	var result string
-
-	if err = rows.Scan(&result); err != nil {
+	
+	err := db.pool.QueryRow(db.ctx, q, encoded_link).Scan(&result)
+	if err != nil {
 		return "", err
 	}
 

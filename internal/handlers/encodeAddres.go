@@ -10,7 +10,8 @@ import (
 
 func GetEncodedAddress() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		str := c.Query("conv_test")
+		str := c
+ 
 		i, err := strconv.ParseUint(str, 10, 64)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
